@@ -1,4 +1,5 @@
 const COOLER_COUNT = 8;
+const WAIT_TIME = 0.1;
 const ELEMENTS = {
     container: document.getElementById('container')
 };
