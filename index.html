@@ -2,25 +2,40 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prüfstationen Web-App</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<link rel="apple-touch-icon" sizes="72x72" href="assets/icon.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="assets/icon.png">
+	<link rel="apple-touch-icon" href="assets/icon.png">
+	<link rel="apple-touch-startup-image" href="assets/splash.png">
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="HandheldFriendly" content="true">
+	<meta name="MobileOptimized" content="240">
+
+    <title>PrüfApp</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #1f1f1f;
-            color: #fff;
+            background-color: #1A1B1E; /* dark 7 */
+            color: #C1C2C5; /* dark 0 */
             margin: 0;
             padding: 0;
+            overflow: hidden;
         }
 
         header {
-            background-color: #333;
+            background-color: #25262B; /* dark 6 */
             padding: 20px;
             text-align: center;
         }
 
         footer {
-            background-color: #333;
+            background-color: #25262B; /* dark 6 */
             padding: 20px;
             text-align: center;
             position: fixed;
@@ -39,19 +54,55 @@
         }
 
         nav ul li a {
-            color: #fff;
+            color: #C1C2C5; /* dark 0 */
             text-decoration: none;
+			text-align: center;
+        }
+
+        .pruefstationen {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* Für eine glattere Scroll-Erfahrung auf iOS */
+            -ms-overflow-style: -ms-autohiding-scrollbar; /* Für eine bessere Scroll-Erfahrung auf Edge */
+            scroll-snap-type: x mandatory; /* Scroll-Snap für horizontales Scrollen */
+			align-items: center;
+			align-self: center;
+			align-content: center;
         }
 
         .pruefstation {
+            width: 100vw;
+            min-height: 100vh;
+            flex: 0 0 auto;
+            scroll-snap-align: start; /* Scroll-Snap auf den Anfang jeder Prüfstation ausrichten */
             text-align: center;
-            margin-top: 50px;
+            padding-top: 50px;
+        }
+
+        input[type="text"],
+        button {
+            background-color: #373A40; /* dark 4 */
+            color: #C1C2C5; /* dark 0 */
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        input[type="text"]::placeholder {
+            color: #5C5F66; /* dark 3 */
+        }
+
+        button:hover {
+            cursor: pointer;
+            background-color: #2C2E33; /* dark 5 */
         }
 
         .progress-bar {
             width: 200px;
             height: 20px;
-            background-color: #555;
+            background-color: #373A40; /* dark 4 */
             border-radius: 10px;
             margin: 20px auto;
             display: none;
@@ -60,7 +111,7 @@
         .progress {
             width: 0;
             height: 100%;
-            background-color: #4caf50;
+            background-color: #2F9E44; /* green 8 */
             border-radius: 10px;
         }
 
@@ -76,53 +127,64 @@
 </head>
 <body>
     <header>
-        <h1>Prüfstationen App</h1>
-        <p>Firma XYZ</p>
+        <h1>Prüfstation App</h1>
+        <p>Schweißerei Lohmann &ndash; made with ❤️ by rxsonanz </p>
     </header>
     <main>
-        <div class="pruefstation">
-            <input type="text" id="startwert" placeholder="Startwert eingeben">
-            <button id="startButton">Start</button>
-            <div class="progress-bar" id="progressBar">
-                <div class="progress" id="progress"></div>
-            </div>
-            <div id="timerDisplay"></div>
-            <input type="text" id="endwert" placeholder="Endwert eingeben">
-            <button id="endButton">Ende</button>
-            <div id="ergebnisAnzeige"></div>
-            <button id="resetButton">Reset</button>
-        </div>
+        <div class="pruefstationen" id="pruefstationen"></div>
     </main>
     <footer>
         <nav>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Reset</a></li>
                 <li><a href="#">Einstellungen</a></li>
             </ul>
         </nav>
     </footer>
     <script>
-        function startPruefung() {
-            var startwertInput = document.getElementById('startwert');
-            var startButton = document.getElementById('startButton');
-            var progressBar = document.getElementById('progressBar');
-            var progress = document.getElementById('progress');
-            var timerDisplay = document.getElementById('timerDisplay');
-            var endwertInput = document.getElementById('endwert');
-            var endButton = document.getElementById('endButton');
-            var ergebnisAnzeige = document.getElementById('ergebnisAnzeige');
-            var resetButton = document.getElementById('resetButton');
+        // JavaScript-Code hier einfügen
+        // Funktion zum Erstellen von Prüfstationen
+        function createPruefstation(id) {
+            var pruefstation = document.createElement('div');
+            pruefstation.classList.add('pruefstation');
+            pruefstation.innerHTML = `
+                <input type="text" class="startwert" placeholder="Startwert eingeben">
+                <button class="startButton">Start</button>
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                <div class="timerDisplay"></div>
+                <input style="display:none;" type="text" class="endwert" placeholder="Endwert eingeben">
+                <button style="display:none;" class="endButton">Ende</button>
+                <div class="ergebnisAnzeige"></div>
+                <button style="display:none;" class="resetButton">Reset</button>
+            `;
+            pruefstation.querySelector('.startButton').addEventListener('click', function() {
+                startPruefung(pruefstation);
+            });
+            document.getElementById('pruefstationen').appendChild(pruefstation);
+        }
+
+        // Funktion zum Starten einer neuen Prüfung
+        function startPruefung(pruefstation) {
+            var startwertInput = pruefstation.querySelector('.startwert');
+            var startButton = pruefstation.querySelector('.startButton');
+            var progressBar = pruefstation.querySelector('.progress-bar');
+            var progress = pruefstation.querySelector('.progress');
+            var timerDisplay = pruefstation.querySelector('.timerDisplay');
+            var endwertInput = pruefstation.querySelector('.endwert');
+            var endButton = pruefstation.querySelector('.endButton');
+            var ergebnisAnzeige = pruefstation.querySelector('.ergebnisAnzeige');
+            var resetButton = pruefstation.querySelector('.resetButton');
 
             startwertInput.style.display = 'none';
             startButton.style.display = 'none';
             progressBar.style.display = 'block';
             timerDisplay.style.display = 'block';
 
-            var remainingTime = 10;
+            var remainingTime = 10; // 10 Sekunden (zum Testen)
             var timerInterval = setInterval(function() {
                 remainingTime--;
-                var progressWidth = (600 - remainingTime) / 6;
+                var progressWidth = (10 - remainingTime) * 20;
                 progress.style.width = progressWidth + 'px';
                 timerDisplay.textContent = remainingTime + ' Sekunden verbleibend';
                 if (remainingTime <= 0) {
@@ -130,7 +192,7 @@
                     timerDisplay.textContent = 'Zeit abgelaufen';
                     endwertInput.style.display = 'block';
                     endButton.style.display = 'block';
-                    resetButton.style.display = 'block';
+                    resetButton.style.display = 'none';
                 }
             }, 1000);
 
@@ -142,13 +204,13 @@
                 }
 
                 var startwert = parseFloat(startwertInput.value.replace(',', '.'));
-                var abweichung = Math.abs(startwert - endwert);
-                if (abweichung <= 0.002) {
-                    ergebnisAnzeige.textContent = 'Kühler ist dicht!';
-                    ergebnisAnzeige.style.color = '#4caf50'; 
-                } else {
+                var abweichung = endwert - startwert;
+                if (abweichung < -0.002) {
                     ergebnisAnzeige.textContent = 'Kühler ist undicht!';
-                    ergebnisAnzeige.style.color = '#f44336'; 
+                    ergebnisAnzeige.style.color = '#E03131'; // red 8
+                } else {
+                    ergebnisAnzeige.textContent = 'Kühler ist dicht!';
+                    ergebnisAnzeige.style.color = '#2F9E44'; // green 8
                 }
                 ergebnisAnzeige.style.display = 'block';
                 resetButton.style.display = 'block';
@@ -169,7 +231,10 @@
             });
         }
 
-        document.getElementById('startButton').addEventListener('click', startPruefung);
+        // Erstelle 8 Prüfstationen
+        for (var i = 1; i <= 8; i++) {
+            createPruefstation(i);
+        }
     </script>
 </body>
 </html>
