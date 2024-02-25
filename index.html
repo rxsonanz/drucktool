@@ -1,34 +1,175 @@
 <!DOCTYPE html>
 <html lang="de">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-		<meta name="theme-color" content="#333333" />
-		<title>Druckprüfung</title>
-		<link rel="stylesheet" type="text/css" href="index.css" />
-	</head>
-	<body>
-		<div class="header">
-			<h1>Druckprüfung</h1>
-		</div>
-		<div class="container" id="container">
-			<!-- Platz für dynamisch generierte cooler-Boxen -->
-		</div>
-		<div class="footer">
-			<nav>
-				<ul>
-					<li>
-						<a href="#" id="home-link"><img src="home-icon.png" alt="Home" /></a>
-					</li>
-					<li>
-						<a href="#" id="settings-link"><img src="settings-icon.png" alt="Settings" /></a>
-					</li>
-				</ul>
-			</nav>
-		</div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prüfstationen Web-App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1f1f1f;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
 
-		<script src="index.js"></script>
-	</body>
+        header {
+            background-color: #333;
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .pruefstation {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 20px;
+            background-color: #555;
+            border-radius: 10px;
+            margin: 20px auto;
+            display: none;
+        }
+
+        .progress {
+            width: 0;
+            height: 100%;
+            background-color: #4caf50;
+            border-radius: 10px;
+        }
+
+        #timerDisplay {
+            display: none;
+        }
+
+        #ergebnisAnzeige {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Prüfstationen App</h1>
+        <p>Firma XYZ</p>
+    </header>
+    <main>
+        <div class="pruefstation">
+            <input type="text" id="startwert" placeholder="Startwert eingeben">
+            <button id="startButton">Start</button>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div id="timerDisplay"></div>
+            <input type="text" id="endwert" placeholder="Endwert eingeben">
+            <button id="endButton">Ende</button>
+            <div id="ergebnisAnzeige"></div>
+            <button id="resetButton">Reset</button>
+        </div>
+    </main>
+    <footer>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Reset</a></li>
+                <li><a href="#">Einstellungen</a></li>
+            </ul>
+        </nav>
+    </footer>
+    <script>
+        function startPruefung() {
+            var startwertInput = document.getElementById('startwert');
+            var startButton = document.getElementById('startButton');
+            var progressBar = document.getElementById('progressBar');
+            var progress = document.getElementById('progress');
+            var timerDisplay = document.getElementById('timerDisplay');
+            var endwertInput = document.getElementById('endwert');
+            var endButton = document.getElementById('endButton');
+            var ergebnisAnzeige = document.getElementById('ergebnisAnzeige');
+            var resetButton = document.getElementById('resetButton');
+
+            startwertInput.style.display = 'none';
+            startButton.style.display = 'none';
+            progressBar.style.display = 'block';
+            timerDisplay.style.display = 'block';
+
+            var remainingTime = 10;
+            var timerInterval = setInterval(function() {
+                remainingTime--;
+                var progressWidth = (600 - remainingTime) / 6;
+                progress.style.width = progressWidth + 'px';
+                timerDisplay.textContent = remainingTime + ' Sekunden verbleibend';
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = 'Zeit abgelaufen';
+                    endwertInput.style.display = 'block';
+                    endButton.style.display = 'block';
+                    resetButton.style.display = 'block';
+                }
+            }, 1000);
+
+            endButton.addEventListener('click', function() {
+                var endwert = parseFloat(endwertInput.value.replace(',', '.'));
+                if (isNaN(endwert)) {
+                    alert('Bitte geben Sie einen gültigen Endwert ein.');
+                    return;
+                }
+
+                var startwert = parseFloat(startwertInput.value.replace(',', '.'));
+                var abweichung = Math.abs(startwert - endwert);
+                if (abweichung <= 0.002) {
+                    ergebnisAnzeige.textContent = 'Kühler ist dicht!';
+                    ergebnisAnzeige.style.color = '#4caf50'; 
+                } else {
+                    ergebnisAnzeige.textContent = 'Kühler ist undicht!';
+                    ergebnisAnzeige.style.color = '#f44336'; 
+                }
+                ergebnisAnzeige.style.display = 'block';
+                resetButton.style.display = 'block';
+            });
+
+            resetButton.addEventListener('click', function() {
+                startwertInput.value = '';
+                endwertInput.value = '';
+                ergebnisAnzeige.style.display = 'none';
+                startwertInput.style.display = 'block';
+                startButton.style.display = 'block';
+                progressBar.style.display = 'none';
+                progress.style.width = '0';
+                timerDisplay.style.display = 'none';
+                endwertInput.style.display = 'none';
+                endButton.style.display = 'none';
+                resetButton.style.display = 'none';
+            });
+        }
+
+        document.getElementById('startButton').addEventListener('click', startPruefung);
+    </script>
+</body>
 </html>
